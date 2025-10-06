@@ -1,0 +1,65 @@
+parent_area,area,abbrv,conference
+AI,Artificial intelligence,ai,AAAI
+AI,Artificial intelligence,ai,IJCAI
+AI,Computer vision,vision,CVPR
+AI,Computer vision,vision,ECCV
+AI,Computer vision,vision,ICCV
+AI,Machine learning,mlmining,ICLR
+AI,Machine learning,mlmining,ICML
+AI,Machine learning,mlmining,NeurIPS
+AI,Natural language processing,nlp,ACL
+AI,Natural language processing,nlp,EMNLP
+AI,Natural language processing,nlp,NAACL
+AI,The Web & information retrieval,inforet,SIGIR
+AI,The Web & information retrieval,inforet,WWW
+Systems,Computer architecture,arch,ASPLOS
+Systems,Computer architecture,arch,ISCA
+Systems,Computer architecture,arch,MICRO
+Systems,Computer networks,comm,SIGCOMM
+Systems,Computer networks,comm,NSDI
+Systems,Computer security,sec,CCS
+Systems,Computer security,sec,IEEE S&P (Oakland)
+Systems,Computer security,sec,USENIX Security
+Systems,Databases,mod,SIGMOD
+Systems,Databases,mod,VLDB
+Systems,Design automation,da,DAC
+Systems,Design automation,da,ICCAD
+Systems,Embedded & real-time systems,bed,EMSOFT
+Systems,Embedded & real-time systems,bed,RTAS
+Systems,Embedded & real-time systems,bed,RTSS
+Systems,High-performance computing,hpc,HPDC
+Systems,High-performance computing,hpc,ICS
+Systems,High-performance computing,hpc,SC
+Systems,Mobile computing,mobile,MobiCom
+Systems,Mobile computing,mobile,MobiSys
+Systems,Mobile computing,mobile,SenSys
+Systems,Measurement & perf. analysis,metrics,IMC
+Systems,Measurement & perf. analysis,metrics,SIGMETRICS
+Systems,Operating systems,ops,OSDI
+Systems,Operating systems,ops,SOSP
+Systems,Programming languages,plan,PLDI
+Systems,Programming languages,plan,POPL
+Systems,Software engineering,soft,FSE
+Systems,Software engineering,soft,ICSE
+Theory,Algorithms & complexity,act,FOCS
+Theory,Algorithms & complexity,act,SODA
+Theory,Algorithms & complexity,act,STOC
+Theory,Cryptography,crypt,CRYPTO
+Theory,Cryptography,crypt,EuroCrypt
+Theory,Logic & verification,log,CAV
+Theory,Logic & verification,log,LICS
+Interdisciplinary Areas,Comp. bio & bioinformatics,bio,ISMB
+Interdisciplinary Areas,Comp. bio & bioinformatics,bio,RECOMB
+Interdisciplinary Areas,Computer graphics,graph,SIGGRAPH
+Interdisciplinary Areas,Computer graphics,graph,SIGGRAPH Asia
+Interdisciplinary Areas,Computer science education,csed,SIGCSE
+Interdisciplinary Areas,Economics & computation,ecom,EC
+Interdisciplinary Areas,Economics & computation,ecom,WINE
+Interdisciplinary Areas,Human-computer interaction,chi,CHI
+Interdisciplinary Areas,Human-computer interaction,chi,UbiComp / Pervasive / IMWUT
+Interdisciplinary Areas,Human-computer interaction,chi,UIST
+Interdisciplinary Areas,Robotics,robotics,ICRA
+Interdisciplinary Areas,Robotics,robotics,IROS
+Interdisciplinary Areas,Robotics,robotics,RSS
+Interdisciplinary Areas,Visualization,visualization,VIS
+Interdisciplinary Areas,Visualization,visualization,VR
