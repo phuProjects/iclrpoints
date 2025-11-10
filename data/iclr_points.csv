@@ -1,0 +1,28 @@
+area,faculty_count,publication_count,faculty_per_pub,iclr_points
+Algorithms & complexity,504.86,2140,0.24,2.62
+Artificial intelligence,1992.22,12998,0.15,1.70
+Comp. bio & bioinformatics,62.18,125,0.50,5.52
+Computer architecture,358.29,1294,0.28,3.07
+Computer graphics,102.96,338,0.30,3.38
+Computer networks,210.11,649,0.32,3.59
+Computer science education,293.43,1571,0.19,2.07
+Computer security,704.34,2356,0.30,3.31
+Computer vision,1216.66,16761,0.07,0.80
+Cryptography,146.83,493,0.30,3.30
+Databases,307.51,905,0.34,3.77
+Design automation,363.17,2470,0.15,1.63
+Economics & computation,96.39,842,0.11,1.27
+Embedded & real-time systems,137.01,490,0.28,3.10
+High-performance computing,807.80,2418,0.33,3.70
+Human-computer interaction,959.72,4232,0.23,2.51
+Logic & verification,136.46,336,0.41,4.50
+Machine learning,2061.08,22853,0.09,1.00
+Measurement & perf. analysis,54.49,139,0.39,4.35
+Mobile computing,356.65,1545,0.23,2.56
+Natural language processing,850.05,9486,0.09,0.99
+Operating systems,119.65,340,0.35,3.90
+Programming languages,165.72,308,0.54,5.97
+Robotics,840.25,11257,0.07,0.83
+Software engineering,277.70,898,0.31,3.43
+The Web & information retrieval,656.12,3779,0.17,1.93
+Visualization,196.36,836,0.23,2.60

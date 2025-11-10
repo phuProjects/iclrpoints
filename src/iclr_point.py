@@ -28,8 +28,7 @@ def load_faculty_names(csrankings_path):
 def load_conference_to_area(area_path):
     """
     Read area.csv and build a dict: conference name -> area
-    Example CSV header (your file): parent_area,area,abbrv,conference
-    We only need the 'conference' and its 'area'.
+    area.csv: parent_area,area,abbrv,conference
     """
     conf_to_area = {}
     with open(area_path, "r") as f:
@@ -62,7 +61,7 @@ def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set):
                 # year and venue
                 year_text = elem.findtext("year")
                 booktitle = elem.findtext("booktitle")
-
+                
                 if not year_text or not booktitle:
                     root.clear()
                     continue
@@ -73,7 +72,7 @@ def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set):
                     # find which area this booktitle belongs to
                     area = None
                     for conf, conf_area in conf_to_area.items():
-                        if conf.lower() in booktitle.lower():
+                        if conf in booktitle:
                             area = conf_area
                             break
 
@@ -85,13 +84,10 @@ def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set):
                         for author_elem in elem.findall("author"):
                             author_name = author_elem.text
                             if author_name and author_name in faculty_set:
-                                area_to_faculty.setdefault(area, set()).add(author_name)
-
+                                area_to_faculty.setdefault(area, set()).add(author_name)   
             # free memory
             root.clear()
-
     return area_to_pub, area_to_faculty
-
 
 def compute_fractional_faculty(area_to_faculty):
     """
