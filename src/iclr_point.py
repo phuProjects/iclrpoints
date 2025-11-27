@@ -1,11 +1,11 @@
 import gzip # For reading compressed dblp xml (.gz)
 import xml.etree.ElementTree as ET # For parsing xml efficiently
+import json
 
 # Paths
 CSRANKINGS_PATH = "data/csrankings_march.csv"
 AREA_PATH = "data/area.csv"
 DBLP_PATH = "data/dblp.xml.gz"
-OUTPUT_PATH = "data/iclr_points.csv"
 
 def load_faculty_names(csrankings_path):
     """
@@ -27,22 +27,24 @@ def load_faculty_names(csrankings_path):
     print("Total number of faculties: ", count)
     return faculty_set
 
-
 def load_conference_to_area(area_path):
     """
-    Read area.csv and build a dict: conference name -> area
+    Read area.csv and build a dict: 
+        conference name -> area
+        area -> parent_area
     area.csv: parent_area,area,abbrv,conference
     """
     conf_to_area = {}
+    area_to_parent = {}
     with open(area_path, "r") as f:
         next(f)  # skip header
         for line in f:
             parent_area, area, abbrv, conference = line.strip().split(",")
             conf_to_area[conference] = area
-    return conf_to_area
+            area_to_parent[area] = parent_area
+    return conf_to_area, area_to_parent
 
-
-def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set):
+def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set, start_year, end_year):
     """
     Stream-parse DBLP and:
     - count publications per area (2019–2023)
@@ -70,8 +72,9 @@ def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set):
                     continue
 
                 year = int(year_text)
-                # We only care about 2019–2023
-                if 2019 <= year <= 2023:
+
+                # We only care about start-end year
+                if start_year <= year <= end_year:
                     # find which area this booktitle belongs to
                     area = None
                     for conf, conf_area in conf_to_area.items():
@@ -90,6 +93,7 @@ def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set):
                                 area_to_faculty.setdefault(area, set()).add(author_name)   
             # free memory
             root.clear()
+
     return area_to_pub, area_to_faculty
 
 def compute_fractional_faculty(area_to_faculty):
@@ -112,53 +116,58 @@ def compute_fractional_faculty(area_to_faculty):
 
     return area_to_fraction_fact
 
+def compute_iclr_points_year_range(start_year, end_year, faculty_set, conf_to_area, area_to_parent):
+    area_to_pub, area_to_faculty = parse_dblp_and_count(DBLP_PATH, conf_to_area, faculty_set, start_year, end_year)
 
-def write_iclr_points_csv(output_path, area_to_pub, area_to_fraction_fact):
-    """
-    Compute:
-      faculty_per_pub = frac_faculty / pubs
-      baseline = ML_faculty / ML_pubs
-      iclr_points = faculty_per_pub / baseline
-    and write to CSV.
-    """
-    # we assume "Machine learning" exists in the data
-    ml_faculty = area_to_fraction_fact.get("Machine learning", 0)
-    ml_pubs = area_to_pub.get("Machine learning", 0)
-    if ml_pubs == 0:
-        raise ValueError("Machine learning baseline not found or has 0 pubs")
-
-    baseline = ml_faculty / ml_pubs
-
-    with open(output_path, "w") as f:
-        f.write("area,faculty_count,publication_count,faculty_per_pub,iclr_points\n")
-        for area in sorted(area_to_pub.keys()):
-            pubs = area_to_pub[area]
-            frac_fac = area_to_fraction_fact.get(area, 0)
-            faculty_per_pub = frac_fac / pubs if pubs else 0
-            iclr_points = faculty_per_pub / baseline if baseline else 0
-
-            row = f"{area},{frac_fac:.2f},{pubs},{faculty_per_pub:.2f},{iclr_points:.2f}\n"
-            f.write(row)
-
-
-def main():
-    # 1) load input data
-    faculty_set = load_faculty_names(CSRANKINGS_PATH)
-    conf_to_area = load_conference_to_area(AREA_PATH)
-
-    # 2) parse DBLP and collect counts
-    area_to_pub, area_to_faculty = parse_dblp_and_count(
-        DBLP_PATH, conf_to_area, faculty_set
-    )
-
-    # 3) fractionalize faculty across areas
     area_to_fraction_fact = compute_fractional_faculty(area_to_faculty)
 
-    # 4) compute + write final csv
-    write_iclr_points_csv(OUTPUT_PATH, area_to_pub, area_to_fraction_fact)
+    #baseline
+    ml_fact = area_to_fraction_fact.get("Machine learning")
+    ml_pubs = area_to_pub.get("Machine learning")
+    baseline = ml_fact / ml_pubs
 
-    print("ICLR points written to", OUTPUT_PATH)
+    rows = []
+    for area in sorted(area_to_pub.keys()):
+        pubs = area_to_pub[area]
+        frac_fac = area_to_fraction_fact.get(area, 0)
+        factulty_per_pub = frac_fac / pubs
+        iclr_points = factulty_per_pub / baseline
 
+        parent_area = area_to_parent.get(area)
 
+        rows.append({
+            "area": area,
+            "parent": parent_area,
+            "faculty_count": round(frac_fac,2),
+            "publication_count": pubs,
+            "faculty_per_pub": round(factulty_per_pub,2),
+            "iclr_points": round(iclr_points,2)
+        })
+
+    return rows
+
+def iclr_json(start_year, end_year):
+
+    faculty_set = load_faculty_names(CSRANKINGS_PATH)
+    conf_to_area, area_to_parent = load_conference_to_area(AREA_PATH)
+
+    rows = compute_iclr_points_year_range(
+        start_year, end_year,
+        faculty_set,
+        conf_to_area,
+        area_to_parent
+    )
+
+    return json.dumps(rows, indent=4)
+
+def main():
+    start_year = 2019
+    end_year = 2023
+    json_str = iclr_json(start_year, end_year)
+
+    output_path = "data/iclr_points.json"
+    with open(output_path, "w") as f:
+        f.write(json_str)
+    
 if __name__ == "__main__":
     main()
