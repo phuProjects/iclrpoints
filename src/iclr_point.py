@@ -74,7 +74,7 @@ def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set, start_year, end_y
                 year = int(year_text)
 
                 # We only care about start-end year
-                if start_year <= year <= end_year:
+                if int(start_year) <= year <= int(end_year):
                     # find which area this booktitle belongs to
                     area = None
                     for conf, conf_area in conf_to_area.items():
@@ -158,7 +158,7 @@ def iclr_json(start_year, end_year):
         area_to_parent
     )
 
-    return json.dumps(rows, indent=4)
+    return json.dumps(rows)
 
 def main():
     start_year = 2019

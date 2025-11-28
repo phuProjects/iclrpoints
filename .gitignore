@@ -7,3 +7,9 @@ dblp.xml.gz
 faculties.csv
 iclr_points.csv
 iclr_points.json
+
+#src
+matplot_iclr_points.py
+
+#venv
+/venv

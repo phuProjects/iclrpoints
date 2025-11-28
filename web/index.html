@@ -223,73 +223,91 @@
         </div>
     </div>
 
-    <script> // Where JavaScript will be ran
+    <script> 
+        //draw chart w new data
+        function drawChart(data) {
 
-        var allData = [];
-        //Step 1: Load data from file
-        fetch("iclr_points.json")
-            //Convert file to a JS object
-            .then(function(response){ return response.json(); })
-            .then(function(data){
+            //sort by parentOrder
+            var parentOrder= ["AI", "Systems", "Theory", "Interdisciplinary Areas"];
+            data.sort(function(a,b) {
+                var pa = parentOrder.indexOf(a.parent_area);
+                var pb = parentOrder.indexOf(b.parent_area);
+                if(pa !== pb) return pa - pb;
+                return a.area.localeCompare(b.area);
+            });
 
-                var parentOrder = ["AI", "Systems", "Theory", "Interdisciplinary Areas"];
-                // sort by parent order
-                data.sort(function(a,b){
-                    var pa = parentOrder.indexOf(a.parent_area);
-                    var pb = parentOrder.indexOf(b.parent_area);
+            var areas = [];
+            var values = [];
+            var parents = [];
+            for(var i = 0; i < data.length; i++) {
+                var row = data[i];
+                areas.push(row.area);
+                values.push(row.iclr_points);
+                parents.push(row.parent_area);
+            };
+            
+            var colorMap = {
+                "AI": "#1f77b4",
+                "Systems": "#ff7f0e",
+                "Theory": "#2ca02c",
+                "Interdisciplinary Areas": "#d62728"
+            };
+            var barColors = parents.map(function(p){
+                return colorMap[p] || "#999";
+            });
 
-                    if(pa !== pb){
-                        return pa - pb;
-                    }
-                    // return b.iclr_points - a.iclr_points;
-                });
-                
-                //default vals
-                document.getElementById("from-year").value = "2019";
-                document.getElementById("to-year").value = "2023";
+            var trace = {
+                type: "bar",
+                x: values,
+                y: areas,
+                orientation: "h",
+                marker: {color: barColors},
+            };
 
-                var areas = [];
-                var values = [];
-                var parents = [];
-                
-                for(var i = data.length - 1; i >= 0; i--){
-                    var row = data[i];
+            var layout = {
+            margin: { l: 230, r: 30, t: 20, b: 30 },
+            xaxis: { title: "ICLR Points" },
+            yaxis: { automargin: true, title: "Area" },
+            showlegend: false,
+            height: 400 + data.length * 10
+            };
 
-                    areas.push(row.area);
-                    values.push(row.iclr_points);
-                    parents.push(row.parent_area);
-                }
-                var colorMap = {
-                    "AI": "#1f77b4",
-                    "Systems": "#ff7f0e",
-                    "Theory": "#2ca02c",
-                    "Interdisciplinary Areas": "#d62728"
-                };
-                var barColors = parents.map(function(p){
-                    return colorMap[p];
-                });
+            Plotly.newPlot("chart", [trace], layout, { displaylogo: false });
+        }
 
-                var trace = {
-                    type: "bar",
-                    x: values,
-                    y: areas,
-                    orientation: "h",
-                    marker: { color: barColors },
-                    hovertemplate: "<b>%{y}</b><br>ICLR Points: %{x:.2f}<extra></extra>"
-                };
-                var layout = {
-                    margin: { l: 200, r: 30, t:30, b:30},
-                    xaxis: { title: "ICLR Points"},
-                    yaxis: { title: "Areas"},
-                    showlegend: false,
-                    height: 400 + data.length * 10
-                };
-                Plotly.newPlot("chart", [trace], layout, { displaylogo: false})
+        function getYearsFromInput() {
+            var fromStr = document.getElementById("from-year").value.trim();
+            var toStr = document.getElementById("to-year").value.trim();
+            var fromYear = parseInt(fromStr);
+            var toYear = parseInt(toStr);
+            if (isNaN(fromYear)) fromYear = 2019;
+            if (isNaN(toYear)) toYear = 2023;
+            return { from: fromYear, to: toYear};
+        }
+
+        function loadData(fromYear, toYear){
+            var url = "http://localhost:8001/iclr_points?from_year=" + fromYear + "&to_year=" + toYear;
+
+            fetch(url)
+            .then(function(response){
+                return response.json();
             })
-            .catch(function(error){
-                document.getElementById("chart").innerText = "Failed to load data.";
-                console.error("Error:", error);
-            }) 
+            .then(function(data){
+                drawChart(data);
+            });
+        }
+
+        function setup(){
+            document.getElementById("from-year").value = "2019";
+            document.getElementById("to-year").value = "2023";
+
+            var btn = document.getElementById("update-range");
+            btn.addEventListener("click", function(){
+                var yrs = getYearsFromInput();
+                loadData(yrs.from, yrs.to);
+            });
+        }
+        setup();
     </script>
 </body>
 </html>
