@@ -1,0 +1,218 @@
+[
+    {
+        "area":"Algorithms & complexity",
+        "faculty_count":472.19,
+        "publication_count":2140,
+        "faculty_per_pub":0.22,
+        "iclr_points":2.73,
+        "parent_area":"Theory"
+    },
+    {
+        "area":"Artificial intelligence",
+        "faculty_count":1798.66,
+        "publication_count":12998,
+        "faculty_per_pub":0.14,
+        "iclr_points":1.71,
+        "parent_area":"AI"
+    },
+    {
+        "area":"Comp. bio & bioinformatics",
+        "faculty_count":60.61,
+        "publication_count":125,
+        "faculty_per_pub":0.48,
+        "iclr_points":6.0,
+        "parent_area":"Interdisciplinary Areas"
+    },
+    {
+        "area":"Computer architecture",
+        "faculty_count":327.08,
+        "publication_count":1294,
+        "faculty_per_pub":0.25,
+        "iclr_points":3.13,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"Computer graphics",
+        "faculty_count":97.08,
+        "publication_count":338,
+        "faculty_per_pub":0.29,
+        "iclr_points":3.55,
+        "parent_area":"Interdisciplinary Areas"
+    },
+    {
+        "area":"Computer networks",
+        "faculty_count":197.05,
+        "publication_count":649,
+        "faculty_per_pub":0.3,
+        "iclr_points":3.76,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"Computer science education",
+        "faculty_count":280.56,
+        "publication_count":1571,
+        "faculty_per_pub":0.18,
+        "iclr_points":2.21,
+        "parent_area":"Interdisciplinary Areas"
+    },
+    {
+        "area":"Computer security",
+        "faculty_count":712.69,
+        "publication_count":2799,
+        "faculty_per_pub":0.25,
+        "iclr_points":3.15,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"Computer vision",
+        "faculty_count":1115.81,
+        "publication_count":16761,
+        "faculty_per_pub":0.07,
+        "iclr_points":0.82,
+        "parent_area":"AI"
+    },
+    {
+        "area":"Cryptography",
+        "faculty_count":135.15,
+        "publication_count":493,
+        "faculty_per_pub":0.27,
+        "iclr_points":3.39,
+        "parent_area":"Theory"
+    },
+    {
+        "area":"Databases",
+        "faculty_count":326.65,
+        "publication_count":1076,
+        "faculty_per_pub":0.3,
+        "iclr_points":3.76,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"Design automation",
+        "faculty_count":329.11,
+        "publication_count":2470,
+        "faculty_per_pub":0.13,
+        "iclr_points":1.65,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"Economics & computation",
+        "faculty_count":87.39,
+        "publication_count":842,
+        "faculty_per_pub":0.1,
+        "iclr_points":1.28,
+        "parent_area":"Interdisciplinary Areas"
+    },
+    {
+        "area":"Embedded & real-time systems",
+        "faculty_count":126.22,
+        "publication_count":490,
+        "faculty_per_pub":0.26,
+        "iclr_points":3.19,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"High-performance computing",
+        "faculty_count":744.82,
+        "publication_count":2418,
+        "faculty_per_pub":0.31,
+        "iclr_points":3.81,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"Human-computer interaction",
+        "faculty_count":885.08,
+        "publication_count":4286,
+        "faculty_per_pub":0.21,
+        "iclr_points":2.56,
+        "parent_area":"Interdisciplinary Areas"
+    },
+    {
+        "area":"Logic & verification",
+        "faculty_count":125.6,
+        "publication_count":336,
+        "faculty_per_pub":0.37,
+        "iclr_points":4.63,
+        "parent_area":"Theory"
+    },
+    {
+        "area":"Machine learning",
+        "faculty_count":2038.46,
+        "publication_count":25228,
+        "faculty_per_pub":0.08,
+        "iclr_points":1.0,
+        "parent_area":"AI"
+    },
+    {
+        "area":"Measurement & perf. analysis",
+        "faculty_count":49.23,
+        "publication_count":139,
+        "faculty_per_pub":0.35,
+        "iclr_points":4.38,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"Mobile computing",
+        "faculty_count":322.69,
+        "publication_count":1545,
+        "faculty_per_pub":0.21,
+        "iclr_points":2.58,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"Natural language processing",
+        "faculty_count":781.06,
+        "publication_count":9486,
+        "faculty_per_pub":0.08,
+        "iclr_points":1.02,
+        "parent_area":"AI"
+    },
+    {
+        "area":"Operating systems",
+        "faculty_count":114.77,
+        "publication_count":340,
+        "faculty_per_pub":0.34,
+        "iclr_points":4.18,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"Programming languages",
+        "faculty_count":152.96,
+        "publication_count":308,
+        "faculty_per_pub":0.5,
+        "iclr_points":6.15,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"Robotics",
+        "faculty_count":773.16,
+        "publication_count":11257,
+        "faculty_per_pub":0.07,
+        "iclr_points":0.85,
+        "parent_area":"Interdisciplinary Areas"
+    },
+    {
+        "area":"Software engineering",
+        "faculty_count":243.44,
+        "publication_count":898,
+        "faculty_per_pub":0.27,
+        "iclr_points":3.35,
+        "parent_area":"Systems"
+    },
+    {
+        "area":"The Web & information retrieval",
+        "faculty_count":578.54,
+        "publication_count":3779,
+        "faculty_per_pub":0.15,
+        "iclr_points":1.89,
+        "parent_area":"AI"
+    },
+    {
+        "area":"Visualization",
+        "faculty_count":182.95,
+        "publication_count":836,
+        "faculty_per_pub":0.22,
+        "iclr_points":2.71,
+        "parent_area":"Interdisciplinary Areas"
+    }
+]

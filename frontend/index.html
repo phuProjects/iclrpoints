@@ -1,35 +1,112 @@
-<!DOCTYPE html> <!-- This is an HTML5 page -->
-<html lang="en"> <!-- this page is in English-->
-<head> <!-- <head> is where you put page setting title scripts -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ICLR Points</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> <!-- loads Plotly from internet. Plotly is chart library-->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        .intro-text {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .intro-text a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .intro-text a:hover {
+            text-decoration: underline;
+        }
+        #layout {
+            display: flex;
+            gap: 20px;
+        }
+        #sidebar {
+            flex: 0 0 300px;
+        }
+        #chart {
+            flex: 1;
+        }
+        #date-range {
+            margin-bottom: 20px;
+        }
+        #date-range label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        #date-range select {
+            padding: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        #date-range button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        #date-range button:hover {
+            background-color: #45a049;
+        }
+        #checkboxes {
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        #checkboxes input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        #checkboxes > div {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+        #checkboxes > input {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
 </head>
-<body> <!-- content user will see -->
-    <div id="menu"></div>
-
-    <h2>ICLR Points</h2>
-    <p>How many ICLR publications is one paper in each area?</p>
+<body>
+    <h1>ICLR Points: How Many ICLR Publications Is One Paper in Each Area?</h1>
+    
+    <div class="intro-text">
+        <p>It is well known that in different computer science areas, it takes different levels of effort to publish one paper. In this webpage, I try to measure the amount of effort to publish one top-tier paper in each area, in the unit of ICLR points, the amount of effort to publish one paper in top ML conferences such as ICLR.</p>
+        <p>The data is found through <a href="https://csrankings.org" target="_blank">CSRankings</a>. The methodology and FAQ can be read <a href="#" target="_blank">here</a>.</p>
+    </div>
 
     <div id="layout">
-
-        <div id="chart"></div> <!-- chart -->
-
-        <div id="sidebar"> <!--sidebar-->
-            <div id="date-range"> <!--Date ranges-->
-                <p>From: <input type="text" id="from-year" placeholder="2019"></p>
-                <p>To: <input type="text" id="to-year" placeholder="2023"></p>
-                <p><button id="update-range">Update</button></p>
+        <div id="sidebar">
+            <div id="date-range">
+                <label>From Date:</label>
+                <select id="from-year"></select>
+                
+                <label>To Date:</label>
+                <select id="to-year"></select>
+                
+                <button id="update-range">Update</button>
             </div>
 
-            <div id="checkboxes"> <!-- Check boxes-->
-                <!--AI-->
+            <div id="checkboxes">
                 <input type="checkbox" checked> AI
 
                 <div>
                     <input type="checkbox" checked> Artificial intelligence
-                    <div><input type="checkbox" checked> AAAI</div>
+                    <div><input type="checkbox"> AAAI</div>
                     <div><input type="checkbox" checked> IJCAI</div>
                 </div>
 
@@ -44,7 +121,7 @@
                     <input type="checkbox" checked> Machine learning
                     <div><input type="checkbox" checked> ICLR</div>
                     <div><input type="checkbox" checked> ICML</div>
-                    <div><input type="checkbox" checked> NeurIPS</div>
+                    <div><input type="checkbox" checked> NIPS</div>
                 </div>
 
                 <div><input type="checkbox"> KDD</div>
@@ -62,7 +139,6 @@
                     <div><input type="checkbox" checked> WWW</div>
                 </div>
                 
-                <!-- Systems -->
                 <input type="checkbox" checked> Systems
 
                 <div>
@@ -70,12 +146,12 @@
                     <div><input type="checkbox" checked> ASPLOS</div>
                     <div><input type="checkbox" checked> ISCA</div>
                     <div><input type="checkbox" checked> MICRO</div>
-                    <div><input type="checkbox" checked> HPCA</div>
+                    <div><input type="checkbox"> HPCA</div>
                 </div>
 
                 <div>
                     <input type="checkbox" checked> Computer networks
-                    <div><input type="checkbox" checked> SIGCOMM</div>
+                    <div><input type="checkbox"> SIGCOMM</div>
                     <div><input type="checkbox" checked> NSDI</div>
                 </div>
 
@@ -152,7 +228,6 @@
                     <div><input type="checkbox" checked> ASE</div>
                     <div><input type="checkbox" checked> ISSTA</div>
                 </div>
-                <!-- Theory -->
                 <input type="checkbox" checked> Theory
 
                 <div>
@@ -173,7 +248,6 @@
                     <div><input type="checkbox" checked> CAV</div>
                     <div><input type="checkbox" checked> LICS</div>
                 </div>
-                <!-- Interdisciplinary Areas -->
                 <input type="checkbox" checked> Interdisciplinary Areas
 
                 <div>
@@ -221,17 +295,36 @@
                 </div>
             </div>
         </div>
+
+        <div id="chart"></div>
     </div>
 
     <script> 
-        //draw chart w new data
-        function drawChart(data) {
+        function populateYearDropdowns() {
+            var fromSelect = document.getElementById("from-year");
+            var toSelect = document.getElementById("to-year");
+            var currentYear = new Date().getFullYear();
+            
+            for (var year = 2000; year <= currentYear; year++) {
+                var option1 = document.createElement("option");
+                option1.value = year;
+                option1.text = year;
+                if (year === 2019) option1.selected = true;
+                fromSelect.appendChild(option1);
+                
+                var option2 = document.createElement("option");
+                option2.value = year;
+                option2.text = year;
+                if (year === 2023) option2.selected = true;
+                toSelect.appendChild(option2);
+            }
+        }
 
-            //sort by parentOrder
+        function drawChart(data) {
             var parentOrder= ["AI", "Systems", "Theory", "Interdisciplinary Areas"];
             data.sort(function(a,b) {
-                var pa = parentOrder.indexOf(a.parent_area);
-                var pb = parentOrder.indexOf(b.parent_area);
+                var pa = parentOrder.indexOf(a.parent || a.parent_area);
+                var pb = parentOrder.indexOf(b.parent || b.parent_area);
                 if(pa !== pb) return pa - pb;
                 return a.area.localeCompare(b.area);
             });
@@ -239,11 +332,11 @@
             var areas = [];
             var values = [];
             var parents = [];
-            for(var i = 0; i < data.length; i++) {
+            for(var i = data.length - 1; i >= 0; i--) {
                 var row = data[i];
                 areas.push(row.area);
                 values.push(row.iclr_points);
-                parents.push(row.parent_area);
+                parents.push(row.parent || row.parent_area);
             };
             
             var colorMap = {
@@ -262,24 +355,24 @@
                 y: areas,
                 orientation: "h",
                 marker: {color: barColors},
+                text: values.map(function(v) { return v.toFixed(2); }),
+                textposition: 'outside'
             };
 
             var layout = {
-            margin: { l: 230, r: 30, t: 20, b: 30 },
-            xaxis: { title: "ICLR Points" },
-            yaxis: { automargin: true, title: "Area" },
-            showlegend: false,
-            height: 400 + data.length * 10
+                margin: { l: 230, r: 50, t: 20, b: 30 },
+                xaxis: { title: "ICLR point" },
+                yaxis: { automargin: true, title: "Area" },
+                showlegend: false,
+                height: 400 + data.length * 10
             };
 
             Plotly.newPlot("chart", [trace], layout, { displaylogo: false });
         }
 
         function getYearsFromInput() {
-            var fromStr = document.getElementById("from-year").value.trim();
-            var toStr = document.getElementById("to-year").value.trim();
-            var fromYear = parseInt(fromStr);
-            var toYear = parseInt(toStr);
+            var fromYear = parseInt(document.getElementById("from-year").value);
+            var toYear = parseInt(document.getElementById("to-year").value);
             if (isNaN(fromYear)) fromYear = 2019;
             if (isNaN(toYear)) toYear = 2023;
             return { from: fromYear, to: toYear};
@@ -294,12 +387,16 @@
             })
             .then(function(data){
                 drawChart(data);
+            })
+            .catch(function(error) {
+                console.error("Error loading data:", error);
             });
         }
 
         function setup(){
-            document.getElementById("from-year").value = "2019";
-            document.getElementById("to-year").value = "2023";
+            populateYearDropdowns();
+
+            loadData(2019, 2023);
 
             var btn = document.getElementById("update-range");
             btn.addEventListener("click", function(){
