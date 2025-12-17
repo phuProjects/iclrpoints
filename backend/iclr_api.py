@@ -24,6 +24,11 @@ app.add_middleware(
 faculty_set = load_faculty_names(CSRANKINGS_PATH)
 conf_to_area, area_to_parent = load_conference_to_area(AREA_PATH)
 
+print("Pre-loading DBLP data cache...")
+from backend.iclr_point import get_cached_dblp_data
+get_cached_dblp_data(conf_to_area, faculty_set)
+print("DBLP cache ready")
+
 @app.get("/iclr_points")
 def iclr_points(from_year: int = 2019, to_year: int = 2023):
     if from_year > to_year:

@@ -6,6 +6,8 @@ CSRANKINGS_PATH = "data/csrankings_march.csv"
 AREA_PATH = "data/area.csv"
 DBLP_PATH = "data/dblp.xml.gz"
 
+_dblp_cache = None
+
 def load_faculty_names(csrankings_path):
     faculty_set = set()
     count = 0
@@ -32,16 +34,18 @@ def load_conference_to_area(area_path):
             area_to_parent[area] = parent_area
     return conf_to_area, area_to_parent
 
-def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set, start_year, end_year):
-    area_to_pub = {}
-    area_to_faculty = {}
-
+def parse_dblp_full(dblp_path, conf_to_area, faculty_set):
+    year_area_data = {}
+    
+    print("Parsing DBLP file...")
     with gzip.open(dblp_path, "rb") as dblp_file:
         context = ET.iterparse(dblp_file, events=("end",))
         _, root = next(context)
 
+        count = 0
         for event, elem in context:
             if elem.tag == "inproceedings":
+                count += 1
                 year_text = elem.findtext("year")
                 booktitle = elem.findtext("booktitle")
                 
@@ -49,24 +53,58 @@ def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set, start_year, end_y
                     root.clear()
                     continue
 
-                year = int(year_text)
+                try:
+                    year = int(year_text)
+                except ValueError:
+                    root.clear()
+                    continue
 
-                if int(start_year) <= year <= int(end_year):
-                    area = None
-                    for conf, conf_area in conf_to_area.items():
-                        if conf in booktitle:
-                            area = conf_area
-                            break
+                area = None
+                for conf, conf_area in conf_to_area.items():
+                    if conf in booktitle:
+                        area = conf_area
+                        break
 
-                    if area:
-                        area_to_pub[area] = area_to_pub.get(area, 0) + 1
+                if area:
+                    if year not in year_area_data:
+                        year_area_data[year] = {}
+                    if area not in year_area_data[year]:
+                        year_area_data[year][area] = {"pub_count": 0, "faculty": set()}
+                    
+                    year_area_data[year][area]["pub_count"] += 1
 
-                        for author_elem in elem.findall("author"):
-                            author_name = author_elem.text
-                            if author_name and author_name in faculty_set:
-                                area_to_faculty.setdefault(area, set()).add(author_name)   
+                    for author_elem in elem.findall("author"):
+                        author_name = author_elem.text
+                        if author_name and author_name in faculty_set:
+                            year_area_data[year][area]["faculty"].add(author_name)
+                            
             root.clear()
+            if count % 100000 == 0:
+                print(f"Processed {count} publications...")
+    
+    print(f"Finished parsing {count} publications")
+    return year_area_data
 
+def get_cached_dblp_data(conf_to_area, faculty_set):
+    global _dblp_cache
+    if _dblp_cache is None:
+        _dblp_cache = parse_dblp_full(DBLP_PATH, conf_to_area, faculty_set)
+    return _dblp_cache
+
+def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set, start_year, end_year):
+    year_area_data = get_cached_dblp_data(conf_to_area, faculty_set)
+    
+    area_to_pub = {}
+    area_to_faculty = {}
+    
+    for year in range(start_year, end_year + 1):
+        if year in year_area_data:
+            for area, data in year_area_data[year].items():
+                area_to_pub[area] = area_to_pub.get(area, 0) + data["pub_count"]
+                if area not in area_to_faculty:
+                    area_to_faculty[area] = set()
+                area_to_faculty[area].update(data["faculty"])
+    
     return area_to_pub, area_to_faculty
 
 def compute_fractional_faculty(area_to_faculty):
