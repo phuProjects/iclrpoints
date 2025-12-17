@@ -1,6 +1,5 @@
 import gzip
 import xml.etree.ElementTree as ET
-import json
 
 CSRANKINGS_PATH = "data/csrankings_march.csv"
 AREA_PATH = "data/area.csv"
@@ -91,22 +90,6 @@ def get_cached_dblp_data(conf_to_area, faculty_set):
         _dblp_cache = parse_dblp_full(DBLP_PATH, conf_to_area, faculty_set)
     return _dblp_cache
 
-def parse_dblp_and_count(dblp_path, conf_to_area, faculty_set, start_year, end_year):
-    year_area_data = get_cached_dblp_data(conf_to_area, faculty_set)
-    
-    area_to_pub = {}
-    area_to_faculty = {}
-    
-    for year in range(start_year, end_year + 1):
-        if year in year_area_data:
-            for area, data in year_area_data[year].items():
-                area_to_pub[area] = area_to_pub.get(area, 0) + data["pub_count"]
-                if area not in area_to_faculty:
-                    area_to_faculty[area] = set()
-                area_to_faculty[area].update(data["faculty"])
-    
-    return area_to_pub, area_to_faculty
-
 def compute_fractional_faculty(area_to_faculty):
     faculty_to_areas = {}
     for area, facs in area_to_faculty.items():
@@ -121,57 +104,53 @@ def compute_fractional_faculty(area_to_faculty):
 
     return area_to_fraction_fact
 
-def compute_iclr_points_year_range(start_year, end_year, faculty_set, conf_to_area, area_to_parent):
-    area_to_pub, area_to_faculty = parse_dblp_and_count(DBLP_PATH, conf_to_area, faculty_set, start_year, end_year)
-
-    area_to_fraction_fact = compute_fractional_faculty(area_to_faculty)
-
-    ml_fact = area_to_fraction_fact.get("Machine learning")
-    ml_pubs = area_to_pub.get("Machine learning")
-    baseline = ml_fact / ml_pubs
-
-    rows = []
-    for area in sorted(area_to_pub.keys()):
-        pubs = area_to_pub[area]
-        frac_fac = area_to_fraction_fact.get(area, 0)
-        faculty_per_pub = frac_fac / pubs
-        iclr_points = faculty_per_pub / baseline
-
-        parent_area = area_to_parent.get(area)
-
-        rows.append({
-            "area": area,
-            "parent": parent_area,
-            "faculty_count": round(frac_fac,2),
-            "publication_count": pubs,
-            "faculty_per_pub": round(faculty_per_pub,2),
-            "iclr_points": round(iclr_points,2)
-        })
-
-    return rows
-
-def iclr_json(start_year, end_year):
-
-    faculty_set = load_faculty_names(CSRANKINGS_PATH)
-    conf_to_area, area_to_parent = load_conference_to_area(AREA_PATH)
-
-    rows = compute_iclr_points_year_range(
-        start_year, end_year,
-        faculty_set,
-        conf_to_area,
-        area_to_parent
-    )
-
-    return json.dumps(rows)
-
-def main():
-    start_year = 2019
-    end_year = 2023
-    json_str = iclr_json(start_year, end_year)
-
-    output_path = "data/iclr_points.json"
-    with open(output_path, "w") as f:
-        f.write(json_str)
+def compute_iclr_points_all_years(faculty_set, conf_to_area, area_to_parent):
+    year_area_data = get_cached_dblp_data(conf_to_area, faculty_set)
     
-if __name__ == "__main__":
-    main()
+    all_years = sorted(year_area_data.keys())
+    all_rows = []
+    
+    for year in all_years:
+        area_to_pub = {}
+        area_to_faculty = {}
+        
+        if year in year_area_data:
+            for area, data in year_area_data[year].items():
+                area_to_pub[area] = data["pub_count"]
+                area_to_faculty[area] = data["faculty"].copy()
+        
+        if not area_to_pub:
+            continue
+        
+        area_to_fraction_fact = compute_fractional_faculty(area_to_faculty)
+        
+        ml_fact = area_to_fraction_fact.get("Machine learning")
+        ml_pubs = area_to_pub.get("Machine learning")
+        
+        if ml_fact is None or ml_pubs is None or ml_pubs == 0:
+            continue
+        
+        baseline = ml_fact / ml_pubs
+        
+        for area in sorted(area_to_pub.keys()):
+            pubs = area_to_pub[area]
+            frac_fac = area_to_fraction_fact.get(area, 0)
+            
+            if pubs == 0:
+                continue
+            
+            faculty_per_pub = frac_fac / pubs
+            iclr_points = faculty_per_pub / baseline
+            parent_area = area_to_parent.get(area)
+            
+            all_rows.append({
+                "year": year,
+                "area": area,
+                "parent": parent_area,
+                "publication_count": pubs,
+                "faculty_count": round(frac_fac, 2),
+                "faculty_per_pub": round(faculty_per_pub, 6),
+                "iclr_points": round(iclr_points, 2)
+            })
+    
+    return all_rows

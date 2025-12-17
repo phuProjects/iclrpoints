@@ -5,7 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.iclr_point import (
     CSRANKINGS_PATH, AREA_PATH,
     load_faculty_names, load_conference_to_area,
-    compute_iclr_points_year_range,
+    compute_iclr_points_all_years,
+    get_cached_dblp_data,
 )
 
 app = FastAPI()
@@ -25,24 +26,18 @@ faculty_set = load_faculty_names(CSRANKINGS_PATH)
 conf_to_area, area_to_parent = load_conference_to_area(AREA_PATH)
 
 print("Pre-loading DBLP data cache...")
-from backend.iclr_point import get_cached_dblp_data
 get_cached_dblp_data(conf_to_area, faculty_set)
 print("DBLP cache ready")
 
-@app.get("/iclr_points")
-def iclr_points(from_year: int = 2019, to_year: int = 2023):
-    if from_year > to_year:
-        from_year, to_year = to_year, from_year
-
+@app.get("/iclr_points_all")
+def iclr_points_all():
     try:
-        rows = compute_iclr_points_year_range(
-            from_year,
-            to_year,
+        rows = compute_iclr_points_all_years(
             faculty_set,
             conf_to_area,
             area_to_parent,
         )
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
     return JSONResponse(content=rows)

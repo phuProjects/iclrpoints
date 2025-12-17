@@ -300,6 +300,8 @@
     </div>
 
     <script> 
+        var allData = [];
+        
         function populateYearDropdowns() {
             var fromSelect = document.getElementById("from-year");
             var toSelect = document.getElementById("to-year");
@@ -320,9 +322,64 @@
             }
         }
 
-        function drawChart(data) {
+        function filterAndAggregateByYearRange(data, fromYear, toYear) {
+            var filtered = data.filter(function(row) {
+                return row.year >= fromYear && row.year <= toYear;
+            });
+            
+            var areaData = {};
+            for (var i = 0; i < filtered.length; i++) {
+                var row = filtered[i];
+                if (!areaData[row.area]) {
+                    areaData[row.area] = {
+                        area: row.area,
+                        parent: row.parent,
+                        publication_count: 0,
+                        faculty_count: 0
+                    };
+                }
+                areaData[row.area].publication_count += row.publication_count;
+                areaData[row.area].faculty_count += row.faculty_count;
+            }
+            
+            var mlArea = areaData["Machine learning"];
+            if (!mlArea || mlArea.publication_count === 0) {
+                return [];
+            }
+            
+            var baseline = mlArea.faculty_count / mlArea.publication_count;
+            
+            var result = [];
+            var areas = Object.keys(areaData).sort();
+            for (var i = 0; i < areas.length; i++) {
+                var area = areas[i];
+                var data = areaData[area];
+                
+                if (data.publication_count === 0) {
+                    continue;
+                }
+                
+                var facultyPerPub = data.faculty_count / data.publication_count;
+                var iclrPoints = facultyPerPub / baseline;
+                
+                result.push({
+                    area: data.area,
+                    parent: data.parent,
+                    faculty_count: Math.round(data.faculty_count * 100) / 100,
+                    publication_count: data.publication_count,
+                    faculty_per_pub: Math.round(facultyPerPub * 100) / 100,
+                    iclr_points: Math.round(iclrPoints * 100) / 100
+                });
+            }
+            
+            return result;
+        }
+
+        function updateChart(fromYear, toYear) {
+            var filteredData = filterAndAggregateByYearRange(allData, fromYear, toYear);
+            
             var parentOrder= ["AI", "Systems", "Theory", "Interdisciplinary Areas"];
-            data.sort(function(a,b) {
+            filteredData.sort(function(a,b) {
                 var pa = parentOrder.indexOf(a.parent || a.parent_area);
                 var pb = parentOrder.indexOf(b.parent || b.parent_area);
                 if(pa !== pb) return pa - pb;
@@ -332,8 +389,8 @@
             var areas = [];
             var values = [];
             var parents = [];
-            for(var i = data.length - 1; i >= 0; i--) {
-                var row = data[i];
+            for(var i = filteredData.length - 1; i >= 0; i--) {
+                var row = filteredData[i];
                 areas.push(row.area);
                 values.push(row.iclr_points);
                 parents.push(row.parent || row.parent_area);
@@ -364,10 +421,14 @@
                 xaxis: { title: "ICLR point" },
                 yaxis: { automargin: true, title: "Area" },
                 showlegend: false,
-                height: 400 + data.length * 10
+                height: 400 + filteredData.length * 10
             };
 
-            Plotly.newPlot("chart", [trace], layout, { displaylogo: false });
+            if (document.getElementById("chart").data) {
+                Plotly.react("chart", [trace], layout, { displaylogo: false });
+            } else {
+                Plotly.newPlot("chart", [trace], layout, { displaylogo: false });
+            }
         }
 
         function getYearsFromInput() {
@@ -378,30 +439,26 @@
             return { from: fromYear, to: toYear};
         }
 
-        function loadData(fromYear, toYear){
-            var url = "http://localhost:8001/iclr_points?from_year=" + fromYear + "&to_year=" + toYear;
-
-            fetch(url)
-            .then(function(response){
-                return response.json();
-            })
-            .then(function(data){
-                drawChart(data);
-            })
-            .catch(function(error) {
-                console.error("Error loading data:", error);
-            });
-        }
-
         function setup(){
             populateYearDropdowns();
 
-            loadData(2019, 2023);
+            fetch("http://localhost:8001/iclr_points_all")
+                .then(function(response){
+                    return response.json();
+                })
+                .then(function(data){
+                    allData = data;
+                    var yrs = getYearsFromInput();
+                    updateChart(yrs.from, yrs.to);
+                })
+                .catch(function(error) {
+                    console.error("Error loading data:", error);
+                });
 
             var btn = document.getElementById("update-range");
             btn.addEventListener("click", function(){
                 var yrs = getYearsFromInput();
-                loadData(yrs.from, yrs.to);
+                updateChart(yrs.from, yrs.to);
             });
         }
         setup();
