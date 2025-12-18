@@ -1,0 +1,90 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+.intro-text {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.intro-text a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.intro-text a:hover {
+    text-decoration: underline;
+}
+
+#layout {
+    display: flex;
+    gap: 20px;
+}
+
+#sidebar {
+    flex: 0 0 300px;
+}
+
+#chart {
+    flex: 1;
+}
+
+#date-range {
+    margin-bottom: 20px;
+}
+
+#date-range label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#date-range select {
+    padding: 5px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+#date-range button {
+    padding: 8px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#date-range button:hover {
+    background-color: #45a049;
+}
+
+#checkboxes {
+    max-height: 600px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+#checkboxes input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+#checkboxes > div {
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+#checkboxes > input {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
